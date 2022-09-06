@@ -31,8 +31,8 @@
                </image>
             </ImageView>
             <Separator opacity="0.0" orientation="VERTICAL" prefHeight="40.0" prefWidth="0.0" />
-            <TextField fx:id="userNameTF" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="35.0" />
-            <PasswordField fx:id="passPF" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="35.0" />
+            <TextField fx:id="userNameTF" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="35.0" text="monitor11@example.com" />
+            <PasswordField fx:id="passPF" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="35.0" text="password" />
             <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#submit" prefHeight="35.0" text="تسجيل دخول" VBox.vgrow="SOMETIMES" />
          </children>
       </VBox>
