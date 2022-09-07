@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class HelloApplication extends Application {
+    public static Stage myStage;
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
@@ -19,6 +20,7 @@ public class HelloApplication extends Application {
         stage.setScene(scene);
         //setScreenMode(stage);
         stage.getIcons().add(new Image("logo1.png"));
+        myStage = stage;
         stage.show();
     }
 
@@ -40,5 +42,11 @@ public class HelloApplication extends Application {
             stage.setMaximized(true);
         }
 
+    }
+
+    public void changeScene(String sceneResource) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(sceneResource));
+        Scene scene = new Scene(fxmlLoader.load(), 400, 600);
+        myStage.setScene(scene);
     }
 }

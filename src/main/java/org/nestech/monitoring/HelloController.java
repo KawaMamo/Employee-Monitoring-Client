@@ -8,6 +8,7 @@ import org.controlsfx.control.Notifications;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +33,12 @@ public class HelloController {
         JSONObject userObj = new JSONObject(dataObj.get("data").toString());
         WebClient.setToken(userObj.get("token").toString());
 
+        HelloApplication main = new HelloApplication();
+        try {
+            main.changeScene("waitingScreen.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         client.setEndPoint("api/employees");
 
         //System.out.println(client.sendGetRequest().get("data").toString());
