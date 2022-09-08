@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="276.0" prefWidth="368.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.nestech.monitoring.AddFingerModal">
+   <children>
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="109.0" layoutY="58.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@finger-print-5525995-4623463.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="employeeNameLbl" layoutX="142.0" layoutY="34.0" text="employee name" />
+      <Label fx:id="informationLbl" layoutX="153.0" layoutY="218.0" text="information" />
+   </children>
+</AnchorPane>

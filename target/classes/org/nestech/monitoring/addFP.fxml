@@ -18,7 +18,7 @@
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="10.0" prefWidth="20.0" />
   </columnConstraints>
   <rowConstraints>
-    <RowConstraints maxHeight="40.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
     <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" vgrow="SOMETIMES" />
     <RowConstraints maxHeight="50.0" minHeight="10.0" vgrow="SOMETIMES" />
   </rowConstraints>
@@ -26,13 +26,13 @@
       <ListView fx:id="employeeListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1" GridPane.vgrow="SOMETIMES" />
       <VBox alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
          <children>
-            <Button mnemonicParsing="false" text="أضف بصمة" />
+            <Button mnemonicParsing="false" onAction="#addFP" text="أضف بصمة" />
          </children>
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
       </VBox>
-      <HBox spacing="20.0" GridPane.columnIndex="1">
+      <HBox alignment="CENTER_LEFT" spacing="20.0" GridPane.columnIndex="1">
          <children>
             <Button mnemonicParsing="false" onAction="#back" prefHeight="34.0" prefWidth="79.0" style="-fx-background-color: transparent;" text="عودة">
                <graphic>
@@ -53,9 +53,6 @@
                </graphic>
             </Button>
          </children>
-         <padding>
-            <Insets top="2.0" />
-         </padding>
       </HBox>
    </children>
 </GridPane>

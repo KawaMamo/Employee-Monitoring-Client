@@ -1,7 +1,12 @@
 package org.nestech.monitoring;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.ListView;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -36,7 +41,14 @@ public class AddFP {
     }
 
     @FXML
-    private void addFP(){
-        
+    private void addFP() throws IOException {
+        Stage addFingerModal = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("addFingerModal.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 368, 276);
+        addFingerModal.setTitle("Monitoring");
+        addFingerModal.setScene(scene);
+        addFingerModal.initModality(Modality.APPLICATION_MODAL);
+        addFingerModal.initStyle(StageStyle.UNDECORATED);
+        addFingerModal.show();
     }
 }

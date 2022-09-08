@@ -5,6 +5,8 @@ module org.nestech.monitoring {
     requires org.controlsfx.controls;
     requires java.net.http;
     requires org.json;
+    requires ZKFingerReader;
+    requires java.sql;
 
     opens org.nestech.monitoring to javafx.fxml;
     exports org.nestech.monitoring;
