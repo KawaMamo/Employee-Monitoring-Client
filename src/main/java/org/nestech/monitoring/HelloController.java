@@ -39,14 +39,6 @@ public class HelloController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        client.setEndPoint("api/employees");
 
-        //System.out.println(client.sendGetRequest().get("data").toString());
-        JSONArray employeeArray = (JSONArray) client.sendGetRequest().get("data");
-        for (Object obj:employeeArray){
-            JSONObject jObj = new JSONObject(obj.toString());
-            //System.out.println(jObj);
-            System.out.println(jObj.getString("name")+jObj.get("id"));
-        }
     }
 }
