@@ -67,6 +67,7 @@ public class AddFingerModal {
 
     @FXML
     private void initialize(){
+
         employeeNameLbl.setText(AddFP.employeeName);
         String infoToShow = null;
         try {
@@ -79,6 +80,12 @@ public class AddFingerModal {
 
         infoToShow =  btnEnroll();
         System.out.println(infoToShow);
+    }
+
+    @FXML
+    private void close(){
+        btnClose();
+        AddFP.addFingerModal.close();
     }
 
     public String btnOpen() throws Exception {
@@ -133,17 +140,9 @@ public class AddFingerModal {
         int nFmt = 0;	//Ansi
 
         FingerprintSensorEx.DBSetParameter(mhDB,  5010, nFmt);
-        //For ISO/Ansi End
-
-        //set fakefun off
-        //FingerprintSensorEx.SetParameter(mhDevice, 2002, changeByte(nFakeFunOn), 4);
 
         byte[] paramValue = new byte[4];
         int[] size = new int[1];
-        //GetFakeOn
-        //size[0] = 4;
-        //FingerprintSensorEx.GetParameters(mhDevice, 2002, paramValue, size);
-        //nFakeFunOn = byteArrayToInt(paramValue);
 
         size[0] = 4;
         FingerprintSensorEx.GetParameters(mhDevice, 1, paramValue, size);
@@ -188,7 +187,7 @@ public class AddFingerModal {
 
 
         try {
-            //mySQLAccess.getTemplate(mhDB);
+            mySQLAccess.getTemplate(mhDB);
             FingerprintSensorEx.DBCount(mhDB);
 
         } catch (Exception e) {
@@ -277,18 +276,12 @@ public class AddFingerModal {
                         0 == (ret = FingerprintSensorEx.DBAdd(mhDB, iFid, regTemp))) {
 
                     try {
-                        //String fullName = nameField.getText();
 
-
-                        int check = 0;
-                        //int shift_id = mySQLAccess.getShiftIdByName(choiceBox.getText());
-                        //mySQLAccess.insertBlob(regTemp, iFid, fullName, father, mother, nationalId, birthPlace, shift_id, branch, fNumber, sNumber, salary_catCB.getValue().toString());
-
-                        //System.out.print("inserted: "+ name);
+                        mySQLAccess.insertBlob(regTemp, AddFP.employeeId, AddFP.employeeName);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    //iFid = 1+ mySQLAccess.getMaxId();
+                    iFid = 1+ mySQLAccess.getMaxId();
                     cbRegTemp = _retLen[0];
                     System.arraycopy(regTemp, 0, lastRegTemp, 0, cbRegTemp);
                     btnClose();
@@ -342,23 +335,10 @@ public class AddFingerModal {
                                 int yaer = mydate.getYear();
                                 String dateString = month+"-"+yaer;
 
-                                /*String name = mySQLAccess.getData(fid[0]);
-                                String nationalID = mySQLAccess.getNation(fid[0]);
-                                String salary = mySQLAccess.getSalary(fid[0]);
-                                String food = mySQLAccess.getFood(fid[0]);
-                                String smoke = mySQLAccess.getSmoke(fid[0]);
-                                String extra = mySQLAccess.getExtra(fid[0]);
-                                String job = mySQLAccess.getJob(fid[0]);
-                                String center = mySQLAccess.getCenter(fid[0]);
-                                String date = mySQLAccess.getDate(fid[0]);
-                                String str[] = date.split("-");*/
+                                String name = mySQLAccess.getData(fid[0]);
+                                int id = mySQLAccess.getId(fid[0]);
 
-                                //int year = Integer.parseInt(str[0]);
-                                //if(year <2014){year=2014;}
-
-                                int currentYear = Calendar.getInstance().get(Calendar.YEAR);
                                 payId = fid[0];
-                                //int MoneyOfYears = (currentYear - year)*1500;
 
                             } catch (Exception e) {
                                 e.printStackTrace();

@@ -16,10 +16,12 @@ import java.io.IOException;
 
 public class AddFP {
 
+    public static Stage addFingerModal;
     @FXML
     private ListView<Employee> employeeListView;
 
     public static String employeeName;
+    public static int employeeId;
 
     @FXML
     private void initialize(){
@@ -28,6 +30,7 @@ public class AddFP {
             @Override
             public void changed(ObservableValue<? extends Employee> observableValue, Employee employee, Employee t1) {
                 employeeName = t1.getName();
+                employeeId = t1.getId();
             }
         });
     }
@@ -52,12 +55,13 @@ public class AddFP {
 
     @FXML
     private void addFP() throws IOException {
-        Stage addFingerModal = new Stage();
+        addFingerModal = new Stage();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("addFingerModal.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 368, 276);
         addFingerModal.setTitle("Monitoring");
         addFingerModal.setScene(scene);
         addFingerModal.initModality(Modality.APPLICATION_MODAL);
+        addFingerModal.initStyle(StageStyle.UNDECORATED);
         addFingerModal.show();
     }
 }

@@ -45,7 +45,7 @@
                </children>
             </HBox>
             <Label text="نوع المرور" />
-            <ChoiceBox maxWidth="1.7976931348623157E308" prefWidth="150.0" />
+            <ChoiceBox fx:id="passageCB" maxWidth="1.7976931348623157E308" prefWidth="150.0" />
          </children>
       </VBox>
       <VBox alignment="CENTER" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
