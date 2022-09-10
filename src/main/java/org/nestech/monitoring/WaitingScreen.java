@@ -462,6 +462,7 @@ public class WaitingScreen {
 
     @FXML
     private void goToSetting(){
+        btnClose();
         HelloApplication main = new HelloApplication();
         try {
             main.changeScene("addFP.fxml");
