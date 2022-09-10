@@ -1,5 +1,7 @@
 package org.nestech.monitoring;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,9 +19,17 @@ public class AddFP {
     @FXML
     private ListView<Employee> employeeListView;
 
+    public static String employeeName;
+
     @FXML
     private void initialize(){
 
+        employeeListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Employee>() {
+            @Override
+            public void changed(ObservableValue<? extends Employee> observableValue, Employee employee, Employee t1) {
+                employeeName = t1.getName();
+            }
+        });
     }
 
     @FXML
@@ -48,7 +58,6 @@ public class AddFP {
         addFingerModal.setTitle("Monitoring");
         addFingerModal.setScene(scene);
         addFingerModal.initModality(Modality.APPLICATION_MODAL);
-        addFingerModal.initStyle(StageStyle.UNDECORATED);
         addFingerModal.show();
     }
 }

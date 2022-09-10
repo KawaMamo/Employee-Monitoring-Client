@@ -11,6 +11,18 @@ public class Employee {
         this.name = name;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
     @Override
     public String toString(){
         return this.name;

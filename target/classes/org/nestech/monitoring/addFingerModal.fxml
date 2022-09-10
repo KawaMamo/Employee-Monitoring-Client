@@ -7,7 +7,7 @@
 
 <AnchorPane prefHeight="276.0" prefWidth="368.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.nestech.monitoring.AddFingerModal">
    <children>
-      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="109.0" layoutY="58.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="fingerprintImg" fitHeight="150.0" fitWidth="200.0" layoutX="109.0" layoutY="58.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@finger-print-5525995-4623463.png" />
          </image>

@@ -21,7 +21,7 @@ public class MySQLAccess {
             // Set up the connection with the DB
             connect = DriverManager
                     .getConnection("jdbc:mysql://localhost:3306/attendance?useUnicode=yes&characterEncoding=UTF-8&useSSL=false&"
-                            + "user=bankUser&password=P@ssw0rd1978");
+                            + "user=dummy&password=P@ssw0rd");
 
 
             // Statements allow to issue SQL queries to the database
