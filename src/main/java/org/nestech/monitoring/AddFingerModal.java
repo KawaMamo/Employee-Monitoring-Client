@@ -262,7 +262,13 @@ public class AddFingerModal {
             if (enroll_idx > 0 && FingerprintSensorEx.DBMatch(mhDB, regtemparray[enroll_idx-1], template) <= 0)
             {
                 System.out.print("please press the same finger 3 times for the enrollment\n");
-                informationLbl.setText("الرجاء وضع الإصبع ذاتها ثلاث مرات على الجهاز اللتسجيل");
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        informationLbl.setText("الرجاء وضع الإصبع ذاتها ثلاث مرات على الجهاز اللتسجيل");
+                    }
+                });
+
                 return;
             }
             System.arraycopy(template, 0, regtemparray[enroll_idx], 0, 2048);

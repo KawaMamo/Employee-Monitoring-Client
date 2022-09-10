@@ -24,11 +24,16 @@
     <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <ImageView fitHeight="280.0" fitWidth="280.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1" GridPane.vgrow="SOMETIMES">
-         <image>
-            <Image url="@finger-print-5525995-4623463.png" />
-         </image>
-      </ImageView>
+      <VBox alignment="CENTER" GridPane.columnIndex="1" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1" GridPane.vgrow="SOMETIMES">
+         <children>
+            <ImageView fitHeight="280.0" fitWidth="280.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@finger-print-5525995-4623463.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="informationLbl" text="info" />
+         </children>
+      </VBox>
       <VBox alignment="CENTER" spacing="5.0" GridPane.columnIndex="1">
          <children>
             <HBox alignment="TOP_RIGHT">
@@ -45,7 +50,7 @@
                </children>
             </HBox>
             <Label text="نوع المرور" />
-            <ChoiceBox maxWidth="1.7976931348623157E308" prefWidth="150.0" />
+            <ChoiceBox fx:id="passageCB" maxWidth="1.7976931348623157E308" prefWidth="150.0" />
          </children>
       </VBox>
       <VBox alignment="CENTER" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
