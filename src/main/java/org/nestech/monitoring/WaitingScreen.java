@@ -357,7 +357,7 @@ public class WaitingScreen {
                         @Override
                         public void run() {
 
-                            informationLbl.setText("Identify fail");
+                            informationLbl.setText("فشل التعرف");
                             System.out.print("Identify fail, errcode=" + ret + "\n");
                         }
                     });
