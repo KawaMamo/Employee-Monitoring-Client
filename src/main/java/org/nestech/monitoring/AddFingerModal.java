@@ -305,6 +305,11 @@ public class AddFingerModal {
                         @Override
                         public void run() {
                             informationLbl.setText("تم التسجيل بنجاح");
+                            try {
+                                fingersLbl.setText(String.valueOf(mySQLAccess.getDataOfEmp(AddFP.employeeId)));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
 
