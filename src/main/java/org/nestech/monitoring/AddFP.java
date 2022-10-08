@@ -44,6 +44,8 @@ public class AddFP {
         });
 
         pageTF.setText("1");
+        populateChoiceBox();
+
     }
 
     @FXML
@@ -64,7 +66,18 @@ public class AddFP {
         JSONArray employeeArray = (JSONArray) client.sendGetRequest().get("data");
         for (Object obj:employeeArray){
             JSONObject jObj = new JSONObject(obj.toString());
-            employeeListView.getItems().add(new Employee(Integer.parseInt(jObj.get("id").toString()), jObj.getString("name")));
+            employeeListView.getItems().add(new Employee(Integer.parseInt(jObj.get("id").toString()), jObj.getString("name"), jObj.getString("department_name")));
+        }
+    }
+
+    private void populateChoiceBox(){
+        departmentCB.getItems().clear();
+        WebClient client = new WebClient("app.config");
+        client.setEndPoint("api/desktop/employees?page="+pageTF.getText());
+        JSONArray employeeArray = (JSONArray) client.sendGetRequest().get("data");
+        for (Object obj:employeeArray){
+            JSONObject jObj = new JSONObject(obj.toString());
+            departmentCB.getItems().add(jObj.getString("department_name"));
         }
     }
 

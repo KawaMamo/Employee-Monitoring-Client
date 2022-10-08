@@ -32,7 +32,7 @@
                <children>
                   <Button mnemonicParsing="false" onAction="#addFP" text="أضف بصمة" />
                   <Button mnemonicParsing="false" onAction="#previous" text="السابق" />
-                  <TextField fx:id="pageTF" prefHeight="26.0" prefWidth="35.0" />
+                  <TextField fx:id="pageTF" alignment="CENTER" prefHeight="26.0" prefWidth="35.0" />
                   <Button mnemonicParsing="false" onAction="#next" text="التالي" />
                </children>
             </HBox>
