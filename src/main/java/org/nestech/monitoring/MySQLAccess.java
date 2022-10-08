@@ -89,6 +89,24 @@ public class MySQLAccess {
         return name;
     }
 
+    public int getDataOfEmp(int empId) throws Exception {
+        int fingers =0;
+        try {
+            connect();
+            preparedStatement = connect
+                    .prepareStatement("SELECT COUNT(id) as fingers from employees WHERE empId = "+empId);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                fingers = resultSet.getInt("fingers");
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            close();
+        }
+        return fingers;
+    }
+
     public int getId(int id) throws Exception {
         int empId =0;
         try {

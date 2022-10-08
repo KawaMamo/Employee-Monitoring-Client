@@ -1,7 +1,5 @@
 package org.nestech.monitoring;
 
-import javafx.application.Platform;
-import org.controlsfx.control.Notifications;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -105,7 +103,9 @@ public class WebClient {
                     .build();
 
             HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            //System.out.println(response.body().toString());
             jsonObject = new JSONObject(response.body().toString());
+
 
         } catch (URISyntaxException e) {
             e.printStackTrace();

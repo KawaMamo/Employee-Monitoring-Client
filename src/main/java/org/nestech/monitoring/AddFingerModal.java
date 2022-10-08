@@ -60,6 +60,9 @@ public class AddFingerModal {
     private Label informationLbl;
 
     @FXML
+    private Label fingersLbl;
+
+    @FXML
     private ImageView fingerprintImg;
 
     private MySQLAccess mySQLAccess = new MySQLAccess();
@@ -80,6 +83,12 @@ public class AddFingerModal {
 
         infoToShow =  btnEnroll();
         System.out.println(infoToShow);
+        try {
+            fingersLbl.setText(String.valueOf(mySQLAccess.getDataOfEmp(AddFP.employeeId)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @FXML

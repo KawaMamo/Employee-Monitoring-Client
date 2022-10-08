@@ -6,15 +6,16 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import org.controlsfx.control.Notifications;
 import org.json.JSONObject;
-
-import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -227,8 +228,6 @@ public class WaitingScreen {
         FingerprintSensorEx.Terminate();
     }
 
-
-
     private void OnExtractOK(byte[] template, int len) throws Exception {
         if(bRegister)
         {
@@ -320,18 +319,37 @@ public class WaitingScreen {
                             }else {
                                 try {
 
-                                    Timestamp now = new Timestamp(System.currentTimeMillis());
+
                                     String name = mySQLAccess.getData(fid[0]);
                                     int id = mySQLAccess.getId(fid[0]);
-                                    informationLbl.setText(name+"-"+now.getTime());
+                                    informationLbl.setText(name);
 
                                     WebClient webClient = new WebClient("app.config");
+                                    webClient.setEndPoint("api/desktop/employees/"+id);
+                                    JSONObject employeeDetails = webClient.sendGetRequest();
+                                    JSONObject activeSystem = employeeDetails.getJSONObject("data").getJSONArray("active_system").getJSONObject(0);
+                                    LocalTime startTime = LocalTime.parse(activeSystem.getString("start_time"));
+                                    LocalTime endTime = LocalTime.parse(activeSystem.getString("end_time"));
+
+                                    String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
+
+                                    if(Integer.parseInt(String.valueOf(Duration.between(startTime, LocalTime.now()).toMinutes())) < Integer.parseInt(PeriodTimes.preTolerance) ) {
+                                        timeStamp = LocalDate.now()+" "+startTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
+                                    }
+
+                                    if(Integer.parseInt(String.valueOf(Duration.between(LocalTime.now(),endTime).toMinutes())) < Integer.parseInt(PeriodTimes.pastTolerance) ) {
+                                        timeStamp = LocalDate.now()+" "+endTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
+                                    }
+
+                                    System.out.println(timeStamp);
+
                                     webClient.setEndPoint("api/desktop/employee/check-in");
                                     Map<String, String> postParameters = new HashMap<>();
-                                    postParameters.put("date", String.valueOf(now.getTime()));
+                                    postParameters.put("date", timeStamp);
                                     postParameters.put("employee_id", String.valueOf(id));
-                                    int type = (passageCB.equals("دخول")) ? 1:0;
+                                    int type = (passageCB.equals("دخول")) ? 0:1;
                                     postParameters.put("type", String.valueOf(type));
+
                                     webClient.setPostParameters(postParameters);
                                     JSONObject checkInObj = webClient.sendPostRequest();
                                     if(checkInObj.get("success").equals(true)){
@@ -339,6 +357,9 @@ public class WaitingScreen {
                                     }
 
                                     payId = fid[0];
+
+                                    /*webClient.setEndPoint("api/desktop/employees?filter[department.name]=employee119");
+                                    webClient.sendGetRequest();*/
 
                                 } catch (Exception e) {
                                     e.printStackTrace();

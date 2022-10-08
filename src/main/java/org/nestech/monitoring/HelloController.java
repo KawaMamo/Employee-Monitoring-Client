@@ -40,5 +40,17 @@ public class HelloController {
             e.printStackTrace();
         }
 
+        client.setEndPoint("api/period-times");
+        JSONObject periodTimes = client.sendGetRequest();
+        JSONArray data = new JSONArray(periodTimes.get("data").toString());
+        for (Object obj: data){
+            if(((JSONObject) obj).get("type").toString().equals("2")){
+                PeriodTimes.preTolerance = String.valueOf(((JSONObject) obj).get("value"));
+            }else if(((JSONObject) obj).get("type").toString().equals("1")){
+                PeriodTimes.pastTolerance = String.valueOf(((JSONObject) obj).get("value"));
+            }
+
+        }
+
     }
 }

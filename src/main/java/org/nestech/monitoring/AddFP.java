@@ -5,7 +5,9 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -20,8 +22,15 @@ public class AddFP {
     @FXML
     private ListView<Employee> employeeListView;
 
+    @FXML
+    private ChoiceBox<String> departmentCB;
+
+    @FXML
+    private TextField pageTF;
+
     public static String employeeName;
     public static int employeeId;
+
 
     @FXML
     private void initialize(){
@@ -33,6 +42,8 @@ public class AddFP {
                 employeeId = t1.getId();
             }
         });
+
+        pageTF.setText("1");
     }
 
     @FXML
@@ -43,9 +54,13 @@ public class AddFP {
 
     @FXML
     private void load(){
+        populateList();
+    }
 
+    private void populateList(){
+        employeeListView.getItems().clear();
         WebClient client = new WebClient("app.config");
-        client.setEndPoint("api/employees");
+        client.setEndPoint("api/desktop/employees?page="+pageTF.getText());
         JSONArray employeeArray = (JSONArray) client.sendGetRequest().get("data");
         for (Object obj:employeeArray){
             JSONObject jObj = new JSONObject(obj.toString());
@@ -63,5 +78,17 @@ public class AddFP {
         addFingerModal.initModality(Modality.APPLICATION_MODAL);
         addFingerModal.initStyle(StageStyle.UNDECORATED);
         addFingerModal.show();
+    }
+
+    @FXML
+    private void next(){
+        pageTF.setText(String.valueOf(Integer.parseInt(pageTF.getText())+1));
+        populateList();
+    }
+
+    @FXML
+    private void previous(){
+        pageTF.setText(String.valueOf(Integer.parseInt(pageTF.getText())-1));
+        populateList();
     }
 }

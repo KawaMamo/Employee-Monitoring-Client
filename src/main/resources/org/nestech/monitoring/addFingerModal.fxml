@@ -14,7 +14,7 @@
          </image>
       </ImageView>
       <Label fx:id="employeeNameLbl" layoutX="142.0" layoutY="34.0" text="employee name" />
-      <Label fx:id="informationLbl" layoutX="153.0" layoutY="218.0" text="information" />
+      <Label fx:id="informationLbl" alignment="CENTER" contentDisplay="CENTER" layoutX="153.0" layoutY="218.0" text="information" />
       <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#close" prefHeight="33.0" prefWidth="51.0" style="-fx-background-color: transparent;">
          <graphic>
             <ImageView fitHeight="38.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
@@ -24,5 +24,7 @@
             </ImageView>
          </graphic>
       </Button>
+      <Label layoutX="242.0" layoutY="62.0" text="عدد الأصابع المعرفة" />
+      <Label fx:id="fingersLbl" layoutX="184.0" layoutY="62.0" text="fingers" />
    </children>
 </AnchorPane>
