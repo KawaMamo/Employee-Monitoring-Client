@@ -9,7 +9,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HelloController {
@@ -18,6 +20,8 @@ public class HelloController {
 
     @FXML
     private TextField userNameTF;
+
+    public static List<String> departmentArray = new ArrayList<>();
 
     @FXML
     void submit(ActionEvent event) {
@@ -31,6 +35,12 @@ public class HelloController {
         JSONObject dataObj = client.sendPostRequest();
         Notifications.create().title("Message").text(dataObj.getString("message")).showInformation();
         JSONObject userObj = new JSONObject(dataObj.get("data").toString());
+        JSONObject departments = new JSONObject(userObj.get("user").toString());
+        JSONArray deptArr = new JSONArray(departments.get("departments").toString());
+
+        for (Object dept: deptArr){
+            departmentArray.add(((JSONObject)dept).getString("name"));
+        }
         WebClient.setToken(userObj.get("token").toString());
 
         HelloApplication main = new HelloApplication();

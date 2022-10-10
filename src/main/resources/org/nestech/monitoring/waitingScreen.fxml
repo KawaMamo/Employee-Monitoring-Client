@@ -55,8 +55,8 @@
       </VBox>
       <VBox alignment="CENTER" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
          <children>
-            <TextField alignment="CENTER" promptText="الرقم السري" />
-            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="تسجيل مرور" />
+            <TextField fx:id="codeTF" alignment="CENTER" promptText="الرقم السري" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#checkByCode" text="تسجيل مرور" />
          </children>
       </VBox>
    </children>

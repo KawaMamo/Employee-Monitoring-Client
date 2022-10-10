@@ -2,8 +2,8 @@ package org.nestech.monitoring;
 
 public class PeriodTimes {
 
-    public static String preTolerance;
-    public static String pastTolerance;
+    public static String preTolerance = "5";
+    public static String pastTolerance= "5";
 
     public static String getPreTolerance() {
         return preTolerance;

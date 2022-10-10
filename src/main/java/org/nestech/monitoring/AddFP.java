@@ -60,9 +60,14 @@ public class AddFP {
     }
 
     private void populateList(){
+
         employeeListView.getItems().clear();
         WebClient client = new WebClient("app.config");
-        client.setEndPoint("api/desktop/employees?page="+pageTF.getText());
+        String getParameters = "?page="+pageTF.getText();
+        if(departmentCB.getValue() != null){
+            getParameters += "&filter[department.name]="+departmentCB.getValue();
+        }
+        client.setEndPoint("api/desktop/employees"+getParameters);
         JSONArray employeeArray = (JSONArray) client.sendGetRequest().get("data");
         for (Object obj:employeeArray){
             JSONObject jObj = new JSONObject(obj.toString());
@@ -73,11 +78,8 @@ public class AddFP {
     private void populateChoiceBox(){
         departmentCB.getItems().clear();
         WebClient client = new WebClient("app.config");
-        client.setEndPoint("api/desktop/employees?page="+pageTF.getText());
-        JSONArray employeeArray = (JSONArray) client.sendGetRequest().get("data");
-        for (Object obj:employeeArray){
-            JSONObject jObj = new JSONObject(obj.toString());
-            departmentCB.getItems().add(jObj.getString("department_name"));
+        for (String item: HelloController.departmentArray){
+            departmentCB.getItems().add(item);
         }
     }
 

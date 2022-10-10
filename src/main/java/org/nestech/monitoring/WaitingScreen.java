@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import org.controlsfx.control.Notifications;
 import org.json.JSONObject;
 import java.io.IOException;
@@ -64,6 +65,11 @@ public class WaitingScreen {
 
     @FXML
     private Label informationLbl;
+
+    @FXML
+    private TextField codeTF;
+
+    String name;
 
     @FXML
     private void initialize(){
@@ -320,41 +326,45 @@ public class WaitingScreen {
                                 try {
 
 
-                                    String name = mySQLAccess.getData(fid[0]);
+                                    name = mySQLAccess.getData(fid[0]);
                                     int id = mySQLAccess.getId(fid[0]);
                                     informationLbl.setText(name);
 
                                     WebClient webClient = new WebClient("app.config");
                                     webClient.setEndPoint("api/desktop/employees/"+id);
                                     JSONObject employeeDetails = webClient.sendGetRequest();
-                                    JSONObject activeSystem = employeeDetails.getJSONObject("data").getJSONArray("active_system").getJSONObject(0);
-                                    LocalTime startTime = LocalTime.parse(activeSystem.getString("start_time"));
-                                    LocalTime endTime = LocalTime.parse(activeSystem.getString("end_time"));
+                                    if(employeeDetails.getJSONObject("data").get("active_system").toString() != "null"){
+                                        JSONObject activeSystem = employeeDetails.getJSONObject("data").getJSONArray("active_system").getJSONObject(0);
+                                        LocalTime startTime = LocalTime.parse(activeSystem.getString("start_time"));
+                                        LocalTime endTime = LocalTime.parse(activeSystem.getString("end_time"));
 
-                                    String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
+                                        String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
 
-                                    if(Integer.parseInt(String.valueOf(Duration.between(startTime, LocalTime.now()).toMinutes())) < Integer.parseInt(PeriodTimes.preTolerance) ) {
-                                        timeStamp = LocalDate.now()+" "+startTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
+                                        if(Integer.parseInt(String.valueOf(Duration.between(startTime, LocalTime.now()).toMinutes())) < Integer.parseInt(PeriodTimes.preTolerance) ) {
+                                            timeStamp = LocalDate.now()+" "+startTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
+                                        }
+
+                                        if(Integer.parseInt(String.valueOf(Duration.between(LocalTime.now(),endTime).toMinutes())) < Integer.parseInt(PeriodTimes.pastTolerance) ) {
+                                            timeStamp = LocalDate.now()+" "+endTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
+                                        }
+
+
+                                        webClient.setEndPoint("api/desktop/employee/check-in");
+                                        Map<String, String> postParameters = new HashMap<>();
+                                        postParameters.put("date", timeStamp);
+                                        postParameters.put("employee_id", String.valueOf(id));
+                                        int type = (passageCB.equals("دخول")) ? 0:1;
+                                        postParameters.put("type", String.valueOf(type));
+
+                                        webClient.setPostParameters(postParameters);
+                                        JSONObject checkInObj = webClient.sendPostRequest();
+                                        if(checkInObj.get("success").equals(true)){
+                                            Notifications.create().title(passageCB.getValue()).text(name).showInformation();
+                                        }
+                                    }else {
+                                        Notifications.create().text("لم يتم تحديد نظام دوام لهذا الموظف").title("Error").showError();
                                     }
 
-                                    if(Integer.parseInt(String.valueOf(Duration.between(LocalTime.now(),endTime).toMinutes())) < Integer.parseInt(PeriodTimes.pastTolerance) ) {
-                                        timeStamp = LocalDate.now()+" "+endTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
-                                    }
-
-                                    System.out.println(timeStamp);
-
-                                    webClient.setEndPoint("api/desktop/employee/check-in");
-                                    Map<String, String> postParameters = new HashMap<>();
-                                    postParameters.put("date", timeStamp);
-                                    postParameters.put("employee_id", String.valueOf(id));
-                                    int type = (passageCB.equals("دخول")) ? 0:1;
-                                    postParameters.put("type", String.valueOf(type));
-
-                                    webClient.setPostParameters(postParameters);
-                                    JSONObject checkInObj = webClient.sendPostRequest();
-                                    if(checkInObj.get("success").equals(true)){
-                                        Notifications.create().title(passageCB.getValue()).text(name).showInformation();
-                                    }
 
                                     payId = fid[0];
 
@@ -490,5 +500,55 @@ public class WaitingScreen {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void checkByCode(){
+
+        if (passageCB.getValue() == null){
+            informationLbl.setText("يرجى تحديد نوع المرور");
+        }else {
+            WebClient client = new WebClient("app.config");
+            client.setEndPoint("api/getEmployeeByCode/"+codeTF.getText());
+            JSONObject employee = new JSONObject(client.sendGetRequest().toString());
+            int id = (int) employee.get("id");
+            name = (String) employee.get("name");
+            client.setEndPoint("api/desktop/employees/"+id);
+            JSONObject employeeDetails = client.sendGetRequest();
+
+            if(employeeDetails.getJSONObject("data").get("active_system").toString() != "null"){
+
+                JSONObject activeSystem = employeeDetails.getJSONObject("data").getJSONArray("active_system").getJSONObject(0);
+                LocalTime startTime = LocalTime.parse(activeSystem.getString("start_time"));
+                LocalTime endTime = LocalTime.parse(activeSystem.getString("end_time"));
+
+                String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
+
+                if(Integer.parseInt(String.valueOf(Duration.between(startTime, LocalTime.now()).toMinutes()))
+                        < Integer.parseInt(PeriodTimes.preTolerance) ) {
+                    timeStamp = LocalDate.now()+" "+startTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
+                }
+
+                if(Integer.parseInt(String.valueOf(Duration.between(LocalTime.now(),endTime).toMinutes())) < Integer.parseInt(PeriodTimes.pastTolerance) ) {
+                    timeStamp = LocalDate.now()+" "+endTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
+                }
+
+                Map<String, String> postParameters = new HashMap<>();
+                postParameters.put("date", timeStamp);
+                postParameters.put("employee_id", String.valueOf(id));
+                int type = (passageCB.equals("دخول")) ? 0:1;
+                postParameters.put("type", String.valueOf(type));
+                client.setEndPoint("api/desktop/employee/check-in");
+
+                client.setPostParameters(postParameters);
+                JSONObject checkInObj = client.sendPostRequest();
+                if(checkInObj.get("success").equals(true)){
+                    Notifications.create().title(passageCB.getValue()).text(name).showInformation();
+                }
+            }else {
+                Notifications.create().text("لم يتم تحديد نظام دوام لهذا الموظف").title("Error").showError();
+            }
+        }
+
     }
 }
