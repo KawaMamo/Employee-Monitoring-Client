@@ -86,6 +86,7 @@ public class AddFingerModal {
         try {
             fingersLbl.setText(String.valueOf(mySQLAccess.getDataOfEmp(AddFP.employeeId)));
         } catch (Exception e) {
+            Notifications.create().title("Connection Error").text("Check local server connectivity and credentials").showError();
             e.printStackTrace();
         }
 

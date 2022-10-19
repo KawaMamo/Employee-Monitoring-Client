@@ -12,14 +12,20 @@ public class MySQLAccess {
     private ResultSet resultSet = null;
 
     public void connect() throws Exception{
+        // load config file
+        String fileName = "app.config";
+        Config config = new Config(fileName);
+        String serverIp = config.prop.getProperty("serverIp");
+        String dbName = config.prop.getProperty("dbName");
+        String dbUser = config.prop.getProperty("dbUser");
+        String dbPassword = config.prop.getProperty("dbPassword");
         try {
             // This will load the MySQL driver, each DB has its own driver
             Class.forName("com.mysql.jdbc.Driver");
             // Set up the connection with the DB
             connect = DriverManager
-                    .getConnection("jdbc:mysql://localhost:3306/monitoring?useUnicode=yes&characterEncoding=UTF-8&useSSL=false&"
-                            + "user=dummy&password=P@ssw0rd");
-
+                    .getConnection("jdbc:mysql://"+serverIp+"/"+dbName+"?useUnicode=yes&characterEncoding=UTF-8&useSSL=false&"
+                            + "user="+dbUser+"&password="+dbPassword+"");
 
             // Statements allow to issue SQL queries to the database
             statement = connect.createStatement();

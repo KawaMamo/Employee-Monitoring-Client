@@ -103,7 +103,7 @@ public class WebClient {
                     .build();
 
             HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            //System.out.println(response.body().toString());
+            System.out.println(response.body().toString());
             jsonObject = new JSONObject(response.body().toString());
 
 

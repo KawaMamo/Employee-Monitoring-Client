@@ -348,12 +348,12 @@ public class WaitingScreen {
                                             timeStamp = LocalDate.now()+" "+endTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
                                         }
 
-
                                         webClient.setEndPoint("api/desktop/employee/check-in");
                                         Map<String, String> postParameters = new HashMap<>();
                                         postParameters.put("date", timeStamp);
                                         postParameters.put("employee_id", String.valueOf(id));
-                                        int type = (passageCB.equals("دخول")) ? 0:1;
+                                        int type = (passageCB.getValue().equals("دخول")) ? 1:0;
+                                        System.out.println("type"+type);
                                         postParameters.put("type", String.valueOf(type));
 
                                         webClient.setPostParameters(postParameters);
@@ -511,6 +511,7 @@ public class WaitingScreen {
             WebClient client = new WebClient("app.config");
             client.setEndPoint("api/getEmployeeByCode/"+codeTF.getText());
             JSONObject employee = new JSONObject(client.sendGetRequest().toString());
+
             int id = (int) employee.get("id");
             name = (String) employee.get("name");
             client.setEndPoint("api/desktop/employees/"+id);
@@ -536,7 +537,8 @@ public class WaitingScreen {
                 Map<String, String> postParameters = new HashMap<>();
                 postParameters.put("date", timeStamp);
                 postParameters.put("employee_id", String.valueOf(id));
-                int type = (passageCB.equals("دخول")) ? 0:1;
+                int type = (passageCB.getValue().equals("دخول")) ? 1:0;
+                System.out.println("type"+type);
                 postParameters.put("type", String.valueOf(type));
                 client.setEndPoint("api/desktop/employee/check-in");
 
@@ -548,6 +550,8 @@ public class WaitingScreen {
             }else {
                 Notifications.create().text("لم يتم تحديد نظام دوام لهذا الموظف").title("Error").showError();
             }
+
+
         }
 
     }
