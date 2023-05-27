@@ -7,6 +7,7 @@ module org.nestech.monitoring {
     requires org.json;
     requires ZKFingerReader;
     requires java.sql;
+    requires com.google.gson;
 
     opens org.nestech.monitoring to javafx.fxml;
     exports org.nestech.monitoring;

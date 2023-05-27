@@ -27,15 +27,12 @@ public class WebClient {
     Config config;
 
     public WebClient(String fileName){
-
         try {
             config = new Config(fileName);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
 
     public void setEndPoint(String endPoint) {
         this.endPoint = endPoint;
@@ -72,7 +69,36 @@ public class WebClient {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        //System.out.println(response.body().toString());
+        jsonObject = new JSONObject(response.body().toString());
+
+        return jsonObject;
+
+    }
+
+    public JSONObject sendAuthRequest(){
+        JSONObject jsonObject = null;
+        postParameters.put("token", token);
+        HttpRequest request = null;
+        try {
+            request = HttpRequest.newBuilder()
+                    .uri(new URI(config.getProp().getProperty("logInUrl")+endPoint))
+                    .POST(HttpRequest.BodyPublishers.ofString(getFormDataAsString(postParameters)))
+                    .header("Content-Type",  "application/x-www-form-urlencoded")
+                    .header("Authorization", "Bearer "+token)
+                    .build();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        HttpResponse response = null;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(response.body());
         jsonObject = new JSONObject(response.body().toString());
 
         return jsonObject;
@@ -103,7 +129,7 @@ public class WebClient {
                     .build();
 
             HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body().toString());
+            System.out.println(response.body());
             jsonObject = new JSONObject(response.body().toString());
 
 
@@ -112,14 +138,33 @@ public class WebClient {
             // TODO: do log4j
         } catch (ConnectException e){
             System.out.println(e.getMessage());
-        } catch (IOException e) {
-            e.printStackTrace();
-            // do log4j
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             // do log4j
         }
 
         return jsonObject;
+    }
+
+    public String sendGetRequestString(){
+
+        String responseString = null;
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(new URI(config.getProp().getProperty("domain")+endPoint))
+                    .GET()
+                    .header("Authorization", "Bearer "+token)
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            responseString = response.body();
+
+        } catch (ConnectException e){
+            System.out.println(e.getMessage());
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return responseString;
     }
 }

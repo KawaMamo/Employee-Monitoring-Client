@@ -1,5 +1,6 @@
 package org.nestech.monitoring;
 
+import com.google.gson.Gson;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -14,7 +15,10 @@ import javafx.stage.StageStyle;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class AddFP {
 
@@ -78,9 +82,17 @@ public class AddFP {
     private void populateChoiceBox(){
         departmentCB.getItems().clear();
         WebClient client = new WebClient("app.config");
-        for (String item: HelloController.departmentArray){
-            departmentCB.getItems().add(item);
+        client.setEndPoint("api/departments");
+        Gson gson = new Gson();
+        final String string = client.sendGetRequestString();
+        System.out.println(string);
+        final Map<String, List<Map<String, String>>> o = gson.fromJson(string, Map.class);
+        System.out.println(o.get("data").get(1).get("name"));
+
+        for (Map<String, String> map : o.get("data")) {
+            departmentCB.getItems().add(map.get("name"));
         }
+
     }
 
     @FXML

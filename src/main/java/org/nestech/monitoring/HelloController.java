@@ -32,16 +32,17 @@ public class HelloController {
         postParameters.put("email", userNameTF.getText());
         postParameters.put("password", passPF.getText());
         client.setPostParameters(postParameters);
-        JSONObject dataObj = client.sendPostRequest();
-        Notifications.create().title("Message").text(dataObj.getString("message")).showInformation();
+        JSONObject dataObj = client.sendAuthRequest();
+        //Notifications.create().title("Message").text(dataObj.getString("message")).showInformation();
         JSONObject userObj = new JSONObject(dataObj.get("data").toString());
-        JSONObject departments = new JSONObject(userObj.get("user").toString());
-        JSONArray deptArr = new JSONArray(departments.get("departments").toString());
+
+        JSONObject additional = new JSONObject(dataObj.get("additional").toString());
+        JSONArray deptArr = new JSONArray(additional.get("departments").toString());
 
         for (Object dept: deptArr){
             departmentArray.add(((JSONObject)dept).getString("name"));
         }
-        WebClient.setToken(userObj.get("token").toString());
+        WebClient.setToken(additional.get("token").toString());
 
         HelloApplication main = new HelloApplication();
         try {
