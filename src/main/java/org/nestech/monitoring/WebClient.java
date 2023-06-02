@@ -64,13 +64,10 @@ public class WebClient {
         HttpResponse response = null;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
         jsonObject = new JSONObject(response.body().toString());
-
         return jsonObject;
 
     }
@@ -93,12 +90,9 @@ public class WebClient {
         HttpResponse response = null;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println(response.body());
         jsonObject = new JSONObject(response.body().toString());
 
         return jsonObject;
@@ -129,18 +123,10 @@ public class WebClient {
                     .build();
 
             HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body());
             jsonObject = new JSONObject(response.body().toString());
 
-
-        } catch (URISyntaxException e) {
+        } catch (URISyntaxException | IOException | InterruptedException e) {
             e.printStackTrace();
-            // TODO: do log4j
-        } catch (ConnectException e){
-            System.out.println(e.getMessage());
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            // do log4j
         }
 
         return jsonObject;
@@ -159,8 +145,6 @@ public class WebClient {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             responseString = response.body();
 
-        } catch (ConnectException e){
-            System.out.println(e.getMessage());
         } catch (URISyntaxException | IOException | InterruptedException e) {
             e.printStackTrace();
         }

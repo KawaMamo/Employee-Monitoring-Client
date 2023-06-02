@@ -1,5 +1,6 @@
 package org.nestech.monitoring;
 
+
 import com.zkteco.biometric.FingerprintSensorErrorCode;
 import com.zkteco.biometric.FingerprintSensorEx;
 import javafx.application.Platform;
@@ -8,17 +9,21 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.controlsfx.control.Notifications;
+import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
-import java.sql.Timestamp;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.nestech.monitoring.model.EmployeeDetails;
+
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class WaitingScreen {
 
@@ -57,7 +62,7 @@ public class WaitingScreen {
     private  String fNumber = "";
     private String sNumber = "";
 
-    private MySQLAccess mySQLAccess = new MySQLAccess();
+    private final MySQLAccess mySQLAccess = new MySQLAccess();
     private WorkThread workThread = null;
 
     @FXML
@@ -334,17 +339,29 @@ public class WaitingScreen {
                                     webClient.setEndPoint("api/desktop/employees/"+id);
                                     JSONObject employeeDetails = webClient.sendGetRequest();
                                     if(employeeDetails.getJSONObject("data").get("active_system").toString() != "null"){
-                                        JSONObject activeSystem = employeeDetails.getJSONObject("data").getJSONArray("active_system").getJSONObject(0);
-                                        LocalTime startTime = LocalTime.parse(activeSystem.getString("start_time"));
-                                        LocalTime endTime = LocalTime.parse(activeSystem.getString("end_time"));
+                                        JSONObject activeSystem = employeeDetails.getJSONObject("data").getJSONObject("active_system");
+                                        LocalTime startTime = null;
+                                        LocalTime endTime = null;
+                                        try {
+                                            startTime = LocalTime.parse(activeSystem.getString("start_time"));
+                                            endTime = LocalTime.parse(activeSystem.getString("end_time"));
+                                        }catch (JSONException ignored){
+
+                                            ObjectMapper objectMapper = new ObjectMapper();
+                                            final EmployeeDetails employeeData = objectMapper.readValue(employeeDetails.toString(), EmployeeDetails.class);
+                                            System.out.println(employeeData.getData().getActive_system().working_information.get(0).getStart_from());
+                                            startTime = LocalTime.parse(employeeData.getData().getActive_system().working_information.get(0).getStart_from());
+                                            endTime = LocalTime.parse(employeeData.getData().getActive_system().working_information.get(0).getStart_from())
+                                                    .plusHours(employeeData.getData().getActive_system().working_information.get(0).working_hours);
+                                        }
 
                                         String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
 
-                                        if(Integer.parseInt(String.valueOf(Duration.between(startTime, LocalTime.now()).toMinutes())) < Integer.parseInt(PeriodTimes.preTolerance) ) {
+                                        if(Objects.nonNull(startTime) && Integer.parseInt(String.valueOf(Duration.between(startTime, LocalTime.now()).toMinutes())) < Integer.parseInt(PeriodTimes.preTolerance) ) {
                                             timeStamp = LocalDate.now()+" "+startTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
                                         }
 
-                                        if(Integer.parseInt(String.valueOf(Duration.between(LocalTime.now(),endTime).toMinutes())) < Integer.parseInt(PeriodTimes.pastTolerance) ) {
+                                        if(Objects.nonNull(endTime) && Integer.parseInt(String.valueOf(Duration.between(LocalTime.now(),endTime).toMinutes())) < Integer.parseInt(PeriodTimes.pastTolerance) ) {
                                             timeStamp = LocalDate.now()+" "+endTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
                                         }
 
@@ -353,23 +370,21 @@ public class WaitingScreen {
                                         postParameters.put("date", timeStamp);
                                         postParameters.put("employee_id", String.valueOf(id));
                                         int type = (passageCB.getValue().equals("دخول")) ? 1:0;
-                                        System.out.println("type"+type);
+
                                         postParameters.put("type", String.valueOf(type));
 
                                         webClient.setPostParameters(postParameters);
                                         JSONObject checkInObj = webClient.sendPostRequest();
-                                        if(checkInObj.get("success").equals(true)){
+                                        if(checkInObj.get("data") != JSONObject.NULL && checkInObj.get("success").equals(true)){
                                             Notifications.create().title(passageCB.getValue()).text(name).showInformation();
+                                        }else {
+                                            Notifications.create().title("Error").text("إجراء غير صحيح").showError();
                                         }
                                     }else {
                                         Notifications.create().text("لم يتم تحديد نظام دوام لهذا الموظف").title("Error").showError();
                                     }
 
-
                                     payId = fid[0];
-
-                                    /*webClient.setEndPoint("api/desktop/employees?filter[department.name]=employee119");
-                                    webClient.sendGetRequest();*/
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -511,46 +526,54 @@ public class WaitingScreen {
             WebClient client = new WebClient("app.config");
             client.setEndPoint("api/getEmployeeByCode/"+codeTF.getText());
             JSONObject employee = new JSONObject(client.sendGetRequest().toString());
+            int id = 0;
+            try {
 
-            int id = (int) employee.get("id");
-            name = (String) employee.get("name");
-            client.setEndPoint("api/desktop/employees/"+id);
-            JSONObject employeeDetails = client.sendGetRequest();
+                id = (int) employee.get("id");
+                name = (String) employee.get("name");
 
-            if(employeeDetails.getJSONObject("data").get("active_system").toString() != "null"){
+                client.setEndPoint("api/desktop/employees/"+id);
+                JSONObject employeeDetails = client.sendGetRequest();
 
-                JSONObject activeSystem = employeeDetails.getJSONObject("data").getJSONArray("active_system").getJSONObject(0);
-                LocalTime startTime = LocalTime.parse(activeSystem.getString("start_time"));
-                LocalTime endTime = LocalTime.parse(activeSystem.getString("end_time"));
+                if(employeeDetails.getJSONObject("data").get("active_system").toString() != "null"){
 
-                String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
+                    JSONObject activeSystem = employeeDetails.getJSONObject("data").getJSONObject("active_system");
+                    LocalTime startTime = LocalTime.parse(activeSystem.getString("start_time"));
+                    LocalTime endTime = LocalTime.parse(activeSystem.getString("end_time"));
 
-                if(Integer.parseInt(String.valueOf(Duration.between(startTime, LocalTime.now()).toMinutes()))
-                        < Integer.parseInt(PeriodTimes.preTolerance) ) {
-                    timeStamp = LocalDate.now()+" "+startTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
+                    String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
+
+                    if(Integer.parseInt(String.valueOf(Duration.between(startTime, LocalTime.now()).toMinutes()))
+                            < Integer.parseInt(PeriodTimes.preTolerance) ) {
+                        timeStamp = LocalDate.now()+" "+startTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
+                    }
+
+                    if(Integer.parseInt(String.valueOf(Duration.between(LocalTime.now(),endTime).toMinutes())) < Integer.parseInt(PeriodTimes.pastTolerance) ) {
+                        timeStamp = LocalDate.now()+" "+endTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
+                    }
+
+                    Map<String, String> postParameters = new HashMap<>();
+                    postParameters.put("date", timeStamp);
+                    postParameters.put("employee_id", String.valueOf(id));
+                    int type = (passageCB.getValue().equals("دخول")) ? 1:0;
+                    System.out.println("type"+type);
+                    postParameters.put("type", String.valueOf(type));
+                    client.setEndPoint("api/desktop/employee/check-in");
+
+                    client.setPostParameters(postParameters);
+                    JSONObject checkInObj = client.sendPostRequest();
+                    if(checkInObj.get("data") != JSONObject.NULL && checkInObj.get("success").equals(true)){
+                        Notifications.create().title(passageCB.getValue()).text(name).showInformation();
+                    }else {
+                        Notifications.create().title("Error").text("إجراء غير صحيح").showError();
+                    }
+                }else {
+                    Notifications.create().text("لم يتم تحديد نظام دوام لهذا الموظف").title("Error").showError();
                 }
 
-                if(Integer.parseInt(String.valueOf(Duration.between(LocalTime.now(),endTime).toMinutes())) < Integer.parseInt(PeriodTimes.pastTolerance) ) {
-                    timeStamp = LocalDate.now()+" "+endTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
-                }
-
-                Map<String, String> postParameters = new HashMap<>();
-                postParameters.put("date", timeStamp);
-                postParameters.put("employee_id", String.valueOf(id));
-                int type = (passageCB.getValue().equals("دخول")) ? 1:0;
-                System.out.println("type"+type);
-                postParameters.put("type", String.valueOf(type));
-                client.setEndPoint("api/desktop/employee/check-in");
-
-                client.setPostParameters(postParameters);
-                JSONObject checkInObj = client.sendPostRequest();
-                if(checkInObj.get("success").equals(true)){
-                    Notifications.create().title(passageCB.getValue()).text(name).showInformation();
-                }
-            }else {
-                Notifications.create().text("لم يتم تحديد نظام دوام لهذا الموظف").title("Error").showError();
+            }catch (JSONException e){
+                Notifications.create().title("Error").text("الكود غير صحيح").showError();
             }
-
 
         }
 

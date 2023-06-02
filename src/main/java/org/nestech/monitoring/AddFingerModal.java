@@ -113,8 +113,8 @@ public class AddFingerModal {
         cbRegTemp = 0;
         bRegister = false;
         bIdentify = false;
-        //iFid = 1+mySQLAccess.getMaxId();
-        iFid = 1;
+        iFid = 1+mySQLAccess.getMaxId();
+        //iFid = 1;
 
         enroll_idx = 0;
         if (FingerprintSensorErrorCode.ZKFP_ERR_OK != FingerprintSensorEx.Init())
@@ -289,7 +289,7 @@ public class AddFingerModal {
                 byte[] regTemp = new byte[_retLen[0]];
 
                 if (0 == (ret = FingerprintSensorEx.DBMerge(mhDB, regtemparray[0], regtemparray[1], regtemparray[2], regTemp, _retLen)) &&
-                        0 == (ret = FingerprintSensorEx.DBAdd(mhDB, iFid, regTemp))) {
+                        0 == (ret = FingerprintSensorEx.DBAdd(mhDB, ++iFid, regTemp))) {
 
                     try {
 
@@ -297,7 +297,7 @@ public class AddFingerModal {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    iFid = 1+ mySQLAccess.getMaxId();
+                    //iFid = 1+ mySQLAccess.getMaxId();
                     cbRegTemp = _retLen[0];
                     System.arraycopy(regTemp, 0, lastRegTemp, 0, cbRegTemp);
                     btnClose();

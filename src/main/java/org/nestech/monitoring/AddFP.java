@@ -1,8 +1,9 @@
 package org.nestech.monitoring;
 
-import com.google.gson.Gson;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,6 +18,7 @@ import org.json.JSONObject;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +29,7 @@ public class AddFP {
     private ListView<Employee> employeeListView;
 
     @FXML
-    private ChoiceBox<String> departmentCB;
+    private ChoiceBox<Department> departmentCB;
 
     @FXML
     private TextField pageTF;
@@ -69,7 +71,7 @@ public class AddFP {
         WebClient client = new WebClient("app.config");
         String getParameters = "?page="+pageTF.getText();
         if(departmentCB.getValue() != null){
-            getParameters += "&filter[department.name]="+departmentCB.getValue();
+            getParameters += "&filter[department.name]="+departmentCB.getValue().name;
         }
         client.setEndPoint("api/desktop/employees"+getParameters);
         JSONArray employeeArray = (JSONArray) client.sendGetRequest().get("data");
@@ -83,15 +85,18 @@ public class AddFP {
         departmentCB.getItems().clear();
         WebClient client = new WebClient("app.config");
         client.setEndPoint("api/departments");
-        Gson gson = new Gson();
         final String string = client.sendGetRequestString();
-        System.out.println(string);
-        final Map<String, List<Map<String, String>>> o = gson.fromJson(string, Map.class);
-        System.out.println(o.get("data").get(1).get("name"));
+        final JSONArray jsonArray = new JSONArray(new JSONObject(string).get("data").toString());
+        jsonArray.getJSONObject(0).get("name");
 
-        for (Map<String, String> map : o.get("data")) {
-            departmentCB.getItems().add(map.get("name"));
+        List<Department> departmentList = new ArrayList<>();
+        for (int i=0;i<jsonArray.length();i++){
+            departmentList.add(new Department(jsonArray.getJSONObject(i).get("name").toString()));
         }
+
+        ObservableList<Department> departments = FXCollections.observableList(departmentList);
+        departmentCB.setItems(departments);
+
 
     }
 
